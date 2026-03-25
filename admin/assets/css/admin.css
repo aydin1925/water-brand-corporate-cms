@@ -1,0 +1,248 @@
+/* ==========================================
+   KARACAPINAR YÖNETİM PANELİ (ADMIN) CSS
+   ========================================== */
+
+/* Ortak Renk Paleti ve Değişkenler */
+:root {
+    --brand-main: #1C4F8C;  
+    --brand-dark: #2c3e50; 
+    --brand-blue: #00a8ff;
+    --light-gray: #f4f8fb;
+    --white: #ffffff;
+    --bg-base: #f4f8fb;
+}
+
+body { 
+    background-color: var(--bg-base); 
+    font-family: 'Montserrat', sans-serif; 
+    color: var(--brand-dark); 
+}
+
+/* Renk Sınıfları */
+.text-brand-dark { color: var(--brand-dark) !important; }
+.text-brand-main { color: var(--brand-main) !important; }
+.text-brand-blue { color: var(--brand-blue) !important; }
+.bg-brand-main { background-color: var(--brand-main) !important; }
+
+/* Admin Layout (Düzen) */
+.admin-main-wrapper { 
+    padding: 40px; 
+    margin-left: 260px; /* Sidebar (sol menü) genişliğine göre */ 
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+}
+
+/* Cam Efektli Paneller ve Hover Efektleri */
+.glass-panel { 
+    background: var(--white); 
+    border: 1px solid rgba(28, 79, 140, 0.05); 
+    border-radius: 20px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03); 
+}
+
+.hover-scale { 
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s; 
+    cursor: default;
+}
+.hover-scale:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 15px 35px rgba(28, 79, 140, 0.08); 
+    border-color: rgba(0, 168, 255, 0.2); 
+}
+
+/* Sipariş / Talep Durum Rozetleri (Badges) */
+.status-badge { 
+    font-size: 0.75rem; 
+    padding: 0.4rem 0.8rem; 
+    border-radius: 50px; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+}
+.status-yeni { background: rgba(0, 168, 255, 0.1); color: #00a8ff; border: 1px solid rgba(0, 168, 255, 0.2); } 
+.status-islemde { background: rgba(251, 146, 60, 0.1); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.2); } 
+.status-tamamlandi { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); } 
+.status-iptal { background: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.2); } 
+
+/* Admin Mobil Uyumluluk */
+@media (max-width: 991px) { 
+    .admin-main-wrapper { 
+        margin-left: 0; 
+        padding: 20px; 
+    } 
+}
+
+/* ==========================================
+   SİPARİŞLER VE BAŞVURULAR (LEADS) SAYFASI ÖZEL
+   ========================================== */
+/* Filtre ve Arama Alanı */
+.filter-wrapper { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 20px; border: 1px solid rgba(28, 79, 140, 0.05); }
+.custom-search-input { border-radius: 50px; padding: 12px 25px; padding-left: 45px; border: 1px solid rgba(28, 79, 140, 0.1); font-size: 14px; background-color: #f8fafc; transition: 0.3s; }
+.custom-search-input:focus { box-shadow: 0 0 0 4px rgba(0, 168, 255, 0.1); border-color: #00a8ff; background-color: #fff; }
+.search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+.custom-select-filter { border-radius: 50px; padding: 12px 20px; font-size: 14px; border: 1px solid rgba(28, 79, 140, 0.1); background-color: #f8fafc; font-weight: 500; color: #2c3e50; cursor: pointer; }
+
+/* Tablo Stilleri */
+.table > :not(caption) > * > * { padding: 1rem 1.5rem; border-bottom-color: rgba(28, 79, 140, 0.05); }
+.table tbody tr { transition: all 0.2s; }
+.table tbody tr:hover { background-color: rgba(0, 168, 255, 0.02) !important; }
+
+/* İşlem Butonları */
+.action-btn { width: 35px; height: 35px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; transition: 0.3s; border: none; text-decoration: none; }
+.btn-view { background: rgba(0, 168, 255, 0.1); color: #00a8ff; }
+.btn-view:hover { background: #00a8ff; color: #fff; transform: translateY(-2px); }
+.btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.btn-delete:hover { background: #ef4444; color: #fff; transform: translateY(-2px); }
+
+/* Sayfalama (Pagination) */
+.pagination .page-link { border-radius: 10px; margin: 0 3px; border: none; color: #2c3e50; font-weight: 600; padding: 8px 16px; transition: 0.3s; }
+.pagination .page-item.active .page-link { background-color: var(--brand-main); color: #fff; box-shadow: 0 4px 10px rgba(28, 79, 140, 0.3); }
+.pagination .page-link:hover:not(.active) { background-color: rgba(0, 168, 255, 0.1); color: #00a8ff; }
+
+/* ==========================================
+   ÜRÜN YÖNETİMİ (PRODUCTS) SAYFASI ÖZEL
+   ========================================== */
+/* Tablodaki Ürün Görseli (Thumbnail) */
+.product-thumb-wrapper {
+    width: 50px;
+    height: 50px;
+    background: #f8fafc;
+    border: 1px solid rgba(28, 79, 140, 0.05);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    flex-shrink: 0;
+}
+.product-thumb-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+}
+
+/* Ürün Durum Rozetleri */
+.status-aktif { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.status-pasif { background: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.2); }
+
+/* Yeni Ürün Ekle Butonu */
+.btn-add-new {
+    background: linear-gradient(45deg, var(--brand-main), var(--brand-blue));
+    color: var(--white);
+    border: none;
+    transition: 0.3s;
+}
+.btn-add-new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 168, 255, 0.3);
+    color: var(--white);
+}
+
+/* ==========================================
+   KALİTE BELGELERİ (CERTIFICATES) SAYFASI ÖZEL
+   ========================================== */
+/* Tablodaki Belge Görseli (Dikdörtgen Thumbnail) */
+.cert-thumb-wrapper {
+    width: 45px;
+    height: 60px; /* A4 kağıt oranına benzer */
+    background: #f8fafc;
+    border: 1px solid rgba(28, 79, 140, 0.05);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    flex-shrink: 0;
+}
+.cert-thumb-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+}
+.cert-thumb-wrapper i {
+    font-size: 24px;
+    color: var(--brand-main);
+    opacity: 0.5;
+}
+
+/* ==========================================
+   BAYİ YÖNETİMİ (DEALERS) SAYFASI ÖZEL
+   ========================================== */
+/* Tablodaki Bayi İkonu */
+.dealer-icon-wrapper {
+    width: 45px;
+    height: 45px;
+    background: rgba(28, 79, 140, 0.05);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--brand-main);
+    font-size: 18px;
+    border: 1px solid rgba(28, 79, 140, 0.1);
+}
+
+/* ==========================================
+   FORM VE AYARLAR (SETTINGS) SAYFASI ÖZEL
+   ========================================== */
+/* Form Etiketleri ve Inputlar */
+.custom-form-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--brand-main);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.custom-form-control {
+    border-radius: 12px;
+    padding: 14px 20px;
+    border: 1px solid rgba(28, 79, 140, 0.1);
+    background-color: #f8fafc;
+    font-size: 14px;
+    color: var(--brand-dark);
+    transition: 0.3s;
+    box-shadow: none;
+}
+.custom-form-control:focus {
+    box-shadow: 0 0 0 4px rgba(0, 168, 255, 0.1);
+    border-color: var(--brand-blue);
+    background-color: var(--white);
+    outline: none;
+}
+.custom-form-control::placeholder {
+    color: #94a3b8;
+}
+
+/* Ayarlar Kart Başlıkları */
+.settings-section-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--brand-dark);
+    margin-bottom: 25px;
+    border-bottom: 1px dashed rgba(28, 79, 140, 0.1);
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.settings-section-title i {
+    color: var(--brand-blue);
+}
+
+/* Kaydet Butonu Kutusu (Sabit/Sticky yapılabilir) */
+.save-action-bar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(28, 79, 140, 0.1);
+    border-radius: 20px;
+    padding: 20px 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 30px;
+}
