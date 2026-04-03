@@ -9,6 +9,10 @@
     --white: #ffffff;
 }
 
+textarea {
+    resize: none !important;
+}
+
 /* Tüm öğelerin (padding/border) boyutları bozmasını engeller */
 *, *::before, *::after {
     box-sizing: border-box;

@@ -1,9 +1,32 @@
+<?php 
+// Eğer bu dosya index.php veya iletişim.php gibi sayfalardan çağrılıyorsa 
+// veritabanı zaten bağlıdır, ancak değilse (güvenlik için) kontrol edip bağlayalım.
+if(!isset($db)){
+    require_once 'config/db.php';
+    $database = new Database();
+    $db = $database->connect();
+}
+
+// AYARLARI ÇEK (Logo ve Telefon için)
+$settings = [];
+try {
+    $stmt = $db->prepare("SELECT setting_key, setting_value FROM settings");
+    $stmt->execute();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $settings[$row['setting_key']] = $row['setting_value'];
+    }
+} catch(PDOException $e) {}
+
+function getHeaderSetting($key, $array, $default = '') {
+    return (isset($array[$key]) && $array[$key] !== '') ? $array[$key] : $default;
+}
+?>
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Karacapınar | Doğal Kaynak Suyu</title>
+    <title><?php echo getHeaderSetting('site_title', $settings, 'Karacapınar | Doğal Kaynak Suyu'); ?></title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,13 +39,13 @@
 <body>
 
     <div id="preloader">
-        <img src="uploads/img/karacapınar-logo.png" alt="Karacapınar Yükleniyor...">
+        <img src="<?php echo getHeaderSetting('logo_url', $settings, 'uploads/img/karacapınar-logo.png'); ?>" alt="Yükleniyor...">
     </div>
 
     <header id="main-header">
         <div class="header-container">
             <a href="index.php" class="logo">
-                <img src="uploads/img/karacapınar-logo.png" alt="Karacapınar Logo">
+                <img src="<?php echo getHeaderSetting('logo_url', $settings, 'uploads/img/karacapınar-logo.png'); ?>" alt="Karacapınar Logo">
             </a>
             
             <div class="hamburger" id="hamburger">
@@ -46,7 +69,7 @@
                     </li>
 
                     <li><a href="urunler.php">Ürünler</a></li>
-                    <li><a href="kalite.php">Kalite Belgeleri</a></li>
+                    <li><a href="bayiler.php">Bayilerimiz</a></li> <li><a href="belgelerimiz.php">Kalite Belgeleri</a></li>
                     
                     <li class="dropdown">
                         <a href="#">İletişim <i class="fas fa-chevron-down dropdown-icon" style="font-size: 10px; margin-left: 5px;"></i></a>
@@ -59,7 +82,7 @@
             </nav>
             
             <div class="header-right">
-                <a href="#" class="btn-header"><i class="fas fa-shopping-basket"></i> Hemen Sipariş</a>
+                <a href="iletisim.php" class="btn-header"><i class="fas fa-shopping-basket"></i> Hemen Sipariş</a>
             </div>
         </div>
     </header>

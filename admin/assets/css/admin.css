@@ -12,6 +12,10 @@
     --bg-base: #f4f8fb;
 }
 
+textarea {
+    resize: none !important;
+}
+
 body { 
     background-color: var(--bg-base); 
     font-family: 'Montserrat', sans-serif; 
@@ -245,4 +249,100 @@ body {
     justify-content: flex-end;
     align-items: center;
     margin-top: 30px;
+}
+
+/* ==========================================
+   YÖNETİCİ GİRİŞ (LOGIN) SAYFASI ÖZEL
+   ========================================== */
+body.login-page-body {
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('https://images.unsplash.com/photo-1434125864115-4cb2a5494f6f?q=80&w=1920&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    background-color: var(--brand-dark);
+}
+
+.login-page-body .login-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(28, 79, 140, 0.85) 0%, rgba(0, 168, 255, 0.6) 100%);
+    z-index: 1;
+}
+
+.login-page-body .login-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 50px 40px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    text-align: center;
+}
+
+.login-page-body .login-logo { max-height: 80px; margin-bottom: 10px; }
+.login-page-body .login-title { font-size: 22px; font-weight: 800; color: var(--brand-dark); margin-bottom: 5px; letter-spacing: -0.5px; }
+.login-page-body .login-subtitle { font-size: 13px; color: #64748b; font-weight: 500; margin-bottom: 35px; }
+
+/* Input Elemanları */
+.login-page-body .input-group-custom { position: relative; margin-bottom: 20px; text-align: left; }
+.login-page-body .input-group-custom i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 16px; transition: 0.3s; }
+
+.login-page-body .form-control-custom {
+    width: 100%;
+    background: #f4f8fb;
+    border: 1px solid rgba(28, 79, 140, 0.1);
+    border-radius: 14px;
+    padding: 16px 20px 16px 45px;
+    font-size: 14px;
+    color: var(--brand-dark);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.login-page-body .form-control-custom::placeholder { color: #94a3b8; font-weight: 400; }
+.login-page-body .form-control-custom:focus { background: #fff; border-color: var(--brand-blue); box-shadow: 0 0 0 4px rgba(0, 168, 255, 0.1); }
+.login-page-body .form-control-custom:focus + i { color: var(--brand-blue); }
+
+/* Giriş Butonu ve Linkler */
+.login-page-body .btn-login {
+    width: 100%;
+    background: linear-gradient(45deg, var(--brand-main), var(--brand-blue));
+    color: #fff;
+    border: none;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+    box-shadow: 0 10px 20px rgba(0, 168, 255, 0.3);
+}
+
+.login-page-body .btn-login:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0, 168, 255, 0.4); }
+.login-page-body .form-check-label { font-size: 13px; color: #64748b; font-weight: 500; cursor: pointer; }
+.login-page-body .forgot-link { font-size: 13px; color: var(--brand-main); font-weight: 700; transition: 0.3s; }
+.login-page-body .forgot-link:hover { color: var(--brand-blue); }
+
+.login-page-body .alert-error {
+    background: #fef2f2; color: #ef4444; border: 1px solid #f87171; border-radius: 10px;
+    padding: 12px; font-size: 13px; font-weight: 600; margin-bottom: 20px; display: none; 
+}
+
+@media (max-width: 576px) {
+    .login-page-body .login-card { margin: 20px; padding: 40px 25px; }
 }

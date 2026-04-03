@@ -1,4 +1,29 @@
-<?php include 'includes/header.php'; ?>
+<?php 
+// Veritabanı bağlantımızı sayfanın en başında çağırıyoruz
+require_once 'config/db.php';
+$database = new Database();
+$db = $database->connect();
+
+// GENEL AYARLARI ÇEK (Rakamlarla Biz İstatistikleri için)
+$settings = [];
+try {
+    $stmt = $db->prepare("SELECT setting_key, setting_value FROM settings");
+    $stmt->execute();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $settings[$row['setting_key']] = $row['setting_value'];
+    }
+} catch(PDOException $e) {
+    // Hata durumunda sessizce geç
+}
+
+// Ayarları güvenle basmak için küçük yardımcı fonksiyonumuz
+function getSetting($key, $array, $default = '') {
+    return (isset($array[$key]) && $array[$key] !== '') ? htmlspecialchars($array[$key]) : $default;
+}
+
+// Üst kısmı (Header) dahil et
+include 'includes/header.php'; 
+?>
 
     <div class="inner-hero" style="background-image: url('https://images.unsplash.com/photo-1434125864115-4cb2a5494f6f?q=80&w=1920&auto=format&fit=crop');">
         <div class="inner-hero-overlay"></div>
@@ -47,22 +72,22 @@
             <div class="stats-grid" id="counter-section">
                 <div class="stat-item">
                     <i class="fas fa-calendar-alt"></i>
-                    <div class="stat-number" data-target="40">0</div>
+                    <div class="stat-number" data-target="<?php echo getSetting('stat_experience', $settings, '40'); ?>">0</div>
                     <div class="stat-text">Yıllık Tecrübe</div>
                 </div>
                 <div class="stat-item">
                     <i class="fas fa-flask"></i>
-                    <div class="stat-number" data-target="8">0</div>
+                    <div class="stat-number" data-target="<?php echo getSetting('stat_ph_value', $settings, '8.2'); ?>">0</div>
                     <div class="stat-text">pH Değeri</div>
                 </div>
                 <div class="stat-item">
                     <i class="fas fa-store"></i>
-                    <div class="stat-number" data-target="1250">0</div>
+                    <div class="stat-number" data-target="<?php echo getSetting('stat_dealers', $settings, '1250'); ?>">0</div>
                     <div class="stat-text">Aktif Bayi</div>
                 </div>
                 <div class="stat-item">
                     <i class="fas fa-leaf"></i>
-                    <div class="stat-number" data-target="100">0</div>
+                    <div class="stat-number" data-target="<?php echo getSetting('stat_natural', $settings, '100'); ?>">0</div>
                     <div class="stat-text">% Doğal Kaynak</div>
                 </div>
             </div>
@@ -74,7 +99,7 @@
             
             <div id="kaynak" class="zigzag-row">
                 <div class="zigzag-img reveal-left">
-                    <img src="https://images.unsplash.com/photo-1544474650-db51a6befa14?q=80&w=800&auto=format&fit=crop" alt="Karacapınar Doğal Kaynak">
+                    <img src="uploads/img/karacapinar-su-damla.jpg" alt="Karacapınar Doğal Kaynak">
                 </div>
                 <div class="zigzag-text reveal-bottom delay-100">
                     <span class="brand-subtitle">KAYNAĞIMIZ</span>

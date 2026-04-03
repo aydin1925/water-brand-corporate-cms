@@ -1,4 +1,40 @@
-<?php include 'includes/header.php'; ?>
+<?php 
+// Veritabanı bağlantımızı sayfanın en başında çağırıyoruz
+require_once 'config/db.php';
+$database = new Database();
+$db = $database->connect();
+
+// 1. GENEL AYARLARI ÇEK (Tecrübe Yılı, pH değeri vs. için)
+$settings = [];
+try {
+    $stmt = $db->prepare("SELECT setting_key, setting_value FROM settings");
+    $stmt->execute();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $settings[$row['setting_key']] = $row['setting_value'];
+    }
+} catch(PDOException $e) {
+    // Hata durumunda sessizce geç
+}
+
+// Ayarları güvenle basmak için küçük yardımcı fonksiyonumuz
+function getSetting($key, $array, $default = '') {
+    return (isset($array[$key]) && $array[$key] !== '') ? htmlspecialchars($array[$key]) : $default;
+}
+
+// 2. AKTİF ÜRÜNLERİ ÇEK (Carousel'de listelemek için)
+$products = [];
+try {
+    // Sadece aktif ürünleri ve sıralama numarasına (id) göre çekiyoruz
+    $prodStmt = $db->prepare("SELECT * FROM products WHERE status = 'aktif' ORDER BY id ASC");
+    $prodStmt->execute();
+    $products = $prodStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $e) {
+    // Hata durumunda boş kalsın
+}
+
+// Üst kısmı (Header) dahil et
+include 'includes/header.php'; 
+?>
 
     <div class="hero-slider">
         <div class="item" style="background-image: url('https://images.unsplash.com/photo-1548839140-29a749e1cf4d?q=80&w=1920&auto=format&fit=crop');">
@@ -13,7 +49,7 @@
             <div class="hero-overlay"></div>
             <div class="hero-caption">
                 <h1 class="reveal-left">HER YUDUMDA<br>TAZELİK</h1>
-                <p class="reveal-left delay-200" style="font-size: 1.3rem; margin-bottom: 30px;">Aileniz için ideal mineral dengesi, 8.2 pH.</p>
+                <p class="reveal-left delay-200" style="font-size: 1.3rem; margin-bottom: 30px;">Aileniz için ideal mineral dengesi, <?php echo getSetting('stat_ph_value', $settings, '8.2'); ?> pH.</p>
                 <a href="#urunler-alani" class="hero-btn reveal-left delay-400">Ürünleri İncele</a>
             </div>
         </div>
@@ -28,7 +64,7 @@
     <section class="features-section">
         <div class="container">
             <div class="section-header reveal-bottom">
-                <h2 class="section-title">40 Yıllık Tecrübe ve Teknolojiyle<br><b>Karacapınar Güvencesi</b></h2>
+                <h2 class="section-title"><?php echo getSetting('stat_experience', $settings, '40'); ?> Yıllık Tecrübe ve Teknolojiyle<br><b>Karacapınar Güvencesi</b></h2>
                 <div class="title-line"></div>
             </div>
             
@@ -73,10 +109,32 @@
                 <button class="carousel-btn left-btn" id="btn-prev"><i class="fas fa-arrow-left"></i></button>
                 
                 <div class="carousel-track" id="product-track">
-                    <div class="product-modern-card"><div class="product-img-holder"><img src="https://cdn-icons-png.flaticon.com/512/3050/3050186.png" alt="19L Damacana"></div><div class="product-details"><h3>19 L Damacana</h3><p>Ev ve ofisler için ideal, ekonomik boy.</p><a href="#" class="product-link">İncele <i class="fas fa-chevron-right"></i></a></div></div>
-                    <div class="product-modern-card"><div class="product-img-holder"><img src="https://cdn-icons-png.flaticon.com/512/2447/2447124.png" alt="15L Cam"></div><div class="product-details"><h3>15 L Cam Damacana</h3><p>Aileniz için sağlıklı cam ambalaj.</p><a href="#" class="product-link">İncele <i class="fas fa-chevron-right"></i></a></div></div>
-                    <div class="product-modern-card"><div class="product-img-holder"><img src="https://cdn-icons-png.flaticon.com/512/824/824239.png" alt="5L Pet"></div><div class="product-details"><h3>5 L Pet Şişe</h3><p>Sofralarınızın vazgeçilmezi.</p><a href="#" class="product-link">İncele <i class="fas fa-chevron-right"></i></a></div></div>
-                    <div class="product-modern-card"><div class="product-img-holder"><img src="https://cdn-icons-png.flaticon.com/512/3132/3132718.png" alt="0.5L Pet"></div><div class="product-details"><h3>0.5 L Pratik Şişe</h3><p>Her an yanınızda, çantanızda.</p><a href="#" class="product-link">İncele <i class="fas fa-chevron-right"></i></a></div></div>
+                    
+                    <?php 
+                    // Veritabanındaki ürünleri dinamik olarak HTML'e basıyoruz
+                    if(count($products) > 0) {
+                        foreach($products as $product) { 
+                    ?>
+                        <div class="product-modern-card">
+                            <div class="product-img-holder">
+                                <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['title']); ?>">
+                            </div>
+                            <div class="product-details">
+                                <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+                                <p><?php echo htmlspecialchars($product['description']); ?></p>
+                                
+                                <a href="product-detail.php?id=<?php echo $product['id']; ?>" class="product-link">İncele <i class="fas fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    <?php 
+                        } 
+                    } else { 
+                    ?>
+                        <div style="width: 100%; text-align: center; padding: 40px; color: #64748b;">
+                            Henüz sisteme eklenmiş aktif bir ürün bulunmuyor.
+                        </div>
+                    <?php } ?>
+
                 </div>
                 
                 <button class="carousel-btn right-btn" id="btn-next"><i class="fas fa-arrow-right"></i></button>
@@ -104,7 +162,7 @@
                 <div class="mineral-burst-card b-ph" data-color="#00a8ff">
                     <div class="burst-inner">
                         <span class="m-icon-burst">pH</span>
-                        <div class="m-info-burst">8.2<br><span class="desc">Alkali</span></div>
+                        <div class="m-info-burst"><?php echo getSetting('stat_ph_value', $settings, '8.2'); ?><br><span class="desc">Alkali</span></div>
                     </div>
                 </div>
                 <div class="mineral-burst-card b-ca" data-color="#1C4F8C">

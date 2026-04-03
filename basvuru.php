@@ -1,4 +1,55 @@
-<?php include 'includes/header.php'; ?>
+<?php 
+// Veritabanı bağlantısı
+require_once 'config/db.php';
+$database = new Database();
+$db = $database->connect();
+
+$alertMessage = "";
+$alertType = "";
+
+// FORM GÖNDERİLDİ Mİ? (DEALER_APPLICATIONS TABLOSUNA KAYIT)
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_partner'])) {
+    
+    $full_name = trim($_POST['full_name']);
+    $phone = trim($_POST['phone']);
+    $email = trim($_POST['email']);
+    $city = trim($_POST['city']);
+    $district = trim($_POST['district']);
+    $budget = isset($_POST['budget']) ? $_POST['budget'] : 'Belirtilmedi';
+    $experience = isset($_POST['experience']) ? $_POST['experience'] : 'Belirtilmedi';
+    $additional_info = trim($_POST['message']); // Formdaki 'message' inputunu 'additional_info' sütununa yazıyoruz
+    $ip_address = $_SERVER['REMOTE_ADDR']; // Kullanıcının IP adresini alıyoruz
+
+    try {
+        // Görseldeki dealer_applications tablosunun sütunlarına göre INSERT işlemi
+        $insert = $db->prepare("INSERT INTO dealer_applications 
+            (full_name, phone, email, city, district, budget, experience, additional_info, status, ip_address) 
+            VALUES 
+            (:full_name, :phone, :email, :city, :district, :budget, :experience, :additional_info, 'yeni', :ip_address)");
+        
+        $insert->execute([
+            ':full_name' => $full_name,
+            ':phone' => $phone,
+            ':email' => $email,
+            ':city' => $city,
+            ':district' => $district,
+            ':budget' => $budget,
+            ':experience' => $experience,
+            ':additional_info' => $additional_info,
+            ':ip_address' => $ip_address
+        ]);
+        
+        $alertMessage = "Bayilik ön başvurunuz başarıyla alınmıştır. Yatırım uzmanlarımız değerlendirme sonrasında sizinle iletişime geçecektir.";
+        $alertType = "success";
+        
+    } catch(PDOException $e) {
+        $alertMessage = "Sistem hatası oluştu. Lütfen bilgilerinizi kontrol edip tekrar deneyin.";
+        $alertType = "error";
+    }
+}
+
+include 'includes/header.php'; 
+?>
 
     <div class="inner-hero contact-hero" style="background-image: url('https://images.unsplash.com/photo-1505236732171-72a5b19c4981?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
         <div class="contact-hero-overlay"></div>
@@ -95,7 +146,7 @@
                         <div class="fh-icon"><i class="fas fa-handshake"></i></div>
                     </div>
                     
-                    <form id="karacapinarPartnerForm">
+                    <form action="" method="POST">
                         
                         <div class="form-group-label"><i class="fas fa-user-tie"></i> KİŞİSEL BİLGİLER</div>
                         <div class="form-grid mb-4">
@@ -104,7 +155,7 @@
                             <div class="fg-half"><input type="email" name="email" class="glass-input" placeholder="E-Posta Adresiniz"></div>
                         </div>
 
-                        <div class="form-group-label" style="color: var(--brand-main);"><i class="fas fa-store"></i> YATIRIM BİLGİLER</div>
+                        <div class="form-group-label" style="color: var(--brand-main);"><i class="fas fa-store"></i> YATIRIM BİLGİLERİ</div>
                         <div class="form-grid mb-4">
                             <div class="fg-half"><input type="text" name="city" class="glass-input" placeholder="Düşünülen İl *" required></div>
                             <div class="fg-half"><input type="text" name="district" class="glass-input" placeholder="Düşünülen İlçe *" required></div>
@@ -137,7 +188,7 @@
                                 <input type="checkbox" id="kvkkCheckPartner" required>
                                 <label for="kvkkCheckPartner"><a href="#">KVKK Aydınlatma Metni</a>'ni okudum ve onaylıyorum.</label>
                             </div>
-                            <button type="submit" class="premium-submit-btn">
+                            <button type="submit" name="submit_partner" class="premium-submit-btn">
                                 Başvuruyu Tamamla <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
@@ -149,3 +200,19 @@
     </main>
 
 <?php include 'includes/footer.php'; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<?php if(!empty($alertMessage)): ?>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        Swal.fire({
+            icon: '<?php echo $alertType; ?>',
+            title: '<?php echo ($alertType == "success") ? "Başarılı!" : "Hata!"; ?>',
+            text: '<?php echo $alertMessage; ?>',
+            confirmButtonColor: '<?php echo ($alertType == "success") ? "#00a8ff" : "#ef4444"; ?>',
+            confirmButtonText: 'Tamam'
+        });
+    });
+</script>
+<?php endif; ?>
